@@ -1,33 +1,7 @@
 import streamlit as st
 import numpy as np
 from PIL import Image
-import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
-
-# ----------------------------
-# Build Simple CNN Model
-# ----------------------------
-def create_model():
-    model = Sequential([
-        Conv2D(32, (3,3), activation='relu', input_shape=(128,128,3)),
-        MaxPooling2D(),
-
-        Conv2D(64, (3,3), activation='relu'),
-        MaxPooling2D(),
-
-        Flatten(),
-        Dense(128, activation='relu'),
-        Dense(1, activation='sigmoid')
-    ])
-
-    model.compile(optimizer='adam',
-                  loss='binary_crossentropy',
-                  metrics=['accuracy'])
-    return model
-
-# Create model
-model = create_model()
+import random   # ✅ added (no tensorflow)
 
 # ----------------------------
 # Streamlit UI
@@ -49,7 +23,7 @@ def preprocess(image):
     return image
 
 # ----------------------------
-# Prediction
+# Prediction (Demo Mode)
 # ----------------------------
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
@@ -57,13 +31,12 @@ if uploaded_file is not None:
 
     img = preprocess(image)
 
-    # Since model is not trained, prediction is random/demo
-    prediction = model.predict(img)
+    # ✅ Random prediction (since no trained model)
+    prediction = random.random()
 
-    # Convert to readable result
-    if prediction[0][0] > 0.5:
+    if prediction > 0.5:
         st.error("🚨 FAKE IMAGE (Deepfake)")
     else:
         st.success("✅ REAL IMAGE")
 
-    st.write(f"Confidence Score: {float(prediction[0][0]):.4f}")
+    st.write(f"Confidence Score: {prediction:.4f}")
